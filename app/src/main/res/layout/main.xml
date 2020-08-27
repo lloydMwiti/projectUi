@@ -11,6 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         app:title="Classroom"
+        app:logo="@drawable/ic_local_library_black_24dp"
+        app:titleMarginStart="30dp"
+        app:elevation="0dp"
         android:background="@color/white"/>
 
 

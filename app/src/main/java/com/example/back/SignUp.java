@@ -72,7 +72,7 @@ public class SignUp extends AppCompatActivity {
                 FirebaseUser user= firebaseAuth.getCurrentUser();
                 if (user!=null){
                     Log.d(TAG,"onAuthChanged:signed_in:" + user.getUid());
-                    startActivity(new Intent(SignUp.this,Home.class));
+                    startActivity(new Intent(SignUp.this,Main.class));
                 }else{
                     Log.d(TAG,"onAuthChanged:signed_out:");
                 }
