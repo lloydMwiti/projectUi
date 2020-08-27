@@ -3,6 +3,7 @@ package com.example.back;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,9 +11,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.back.fireModel.Fmodel;
 import com.example.back.popup.Popup;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +35,7 @@ public class Login extends AppCompatActivity {
     EditText email, password;
     String vemail, vpass;
     private FirebaseAuth mAuth;
+    ProgressDialog p;
     private FirebaseAuth.AuthStateListener authStateListener;
 
     @Override
@@ -40,7 +46,7 @@ public class Login extends AppCompatActivity {
         Button login = findViewById(R.id.kill_login);
         email = findViewById(R.id.login_email);
         password = findViewById(R.id.login_password);
-
+        p=new ProgressDialog(Login.this);
         mAuth=FirebaseAuth.getInstance();
 
 
@@ -66,20 +72,7 @@ public class Login extends AppCompatActivity {
             }
         });
     }
-    //if user is logged in
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(authStateListener);
-    }
-    //if user is logged out
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (authStateListener != null){
-            mAuth.removeAuthStateListener(authStateListener);
-        }
-    }
+
 
     //call to custom popup with custom title and message
     public void popup(String t, String m) {
@@ -87,20 +80,48 @@ public class Login extends AppCompatActivity {
         popup.show(getSupportFragmentManager(), "no tag");
     }
 
+    //updateui method is removed for simplicity
+
+
     //called by the onclick function of the log in button
     public void login() {
 
         if (email.getText().toString().isEmpty() || password.getText().toString().isEmpty()) {
             popup("Error", "make sure all fileds are filled in first");
         } else {
+            p.setTitle("loading ...");
+            p.setMessage("checking data");
+            p.setCanceledOnTouchOutside(false);
+            p.show();
             //get string from input fields
             vemail = email.getText().toString();
             vpass = password.getText().toString();
             //connect to firebase
 
             // email and password sign in with firebase auth
-            mAuth.signInWithEmailAndPassword(vemail,vpass);
-            startActivity(new Intent(Login.this,Home.class));
+            mAuth.signInWithEmailAndPassword(vemail, vpass)
+                    .addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                p.dismiss();
+                                Log.d(TAG, "signInWithEmail:success");
+                                startActivity(new Intent(Login.this,Home.class));
+
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w(TAG, "signInWithEmail:failure", task.getException());
+                                p.dismiss();
+                                popup("ooops...","something went wrong");
+                                startActivity(new Intent(Login.this,Home.class));
+
+
+                            }
+
+                            // ...
+                        }
+                    });
+
 
         }
 

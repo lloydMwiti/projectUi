@@ -65,9 +65,19 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
-        if (mAuth.getCurrentUser()!=null){
-            startActivity(new Intent(SignUp.this,Home.class));
-        }
+        //auth listener
+        authStateListener=new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user= firebaseAuth.getCurrentUser();
+                if (user!=null){
+                    Log.d(TAG,"onAuthChanged:signed_in:" + user.getUid());
+                    startActivity(new Intent(SignUp.this,Home.class));
+                }else{
+                    Log.d(TAG,"onAuthChanged:signed_out:");
+                }
+            }
+        };
 
 
     }
@@ -118,14 +128,16 @@ public class SignUp extends AppCompatActivity {
                 progressDialog.setMessage("creating your account ....");
                 progressDialog.setCanceledOnTouchOutside(false);
                 progressDialog.show();
-                mAuth.createUserWithEmailAndPassword(vemail, vpassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                mAuth.createUserWithEmailAndPassword(vemail, vpassword).addOnCompleteListener(this,new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             progressDialog.dismiss();
+                            Log.d(TAG, "createUserWithEmail:success");
                             Toast.makeText(SignUp.this, "account created", Toast.LENGTH_SHORT).show();
                         } else {
                             progressDialog.dismiss();
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             popup("Failed", "could not connect to network");
                         }
                     }
