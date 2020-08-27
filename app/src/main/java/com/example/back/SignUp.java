@@ -82,6 +82,7 @@ public class SignUp extends AppCompatActivity {
 
     }
 
+
     //create account method
     private void createAccount(String email, String password) {
         progressDialog.setTitle("Creating account");
@@ -168,5 +169,9 @@ public class SignUp extends AppCompatActivity {
 
             }
         }
+    }
+
+    public void pass(View view) {
+        startActivity(new Intent(SignUp.this,Main.class));
     }
 }

@@ -36,6 +36,7 @@ public class Login extends AppCompatActivity {
     String vemail, vpass;
     private FirebaseAuth mAuth;
     ProgressDialog p;
+    Button login;
     private FirebaseAuth.AuthStateListener authStateListener;
 
     @Override
@@ -43,13 +44,19 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
-        Button login = findViewById(R.id.kill_login);
+        Button kill_login = findViewById(R.id.kill_login);
         email = findViewById(R.id.login_email);
         password = findViewById(R.id.login_password);
         p=new ProgressDialog(Login.this);
         mAuth=FirebaseAuth.getInstance();
+        login=findViewById(R.id.loginbtn);
 
-
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                login();
+            }
+        });
         //auth listener
         authStateListener=new FirebaseAuth.AuthStateListener() {
             @Override
@@ -64,7 +71,7 @@ public class Login extends AppCompatActivity {
         };
 
         //go back to login activity
-        login.setOnClickListener(new View.OnClickListener() {
+        kill_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Login.this, SignUp.class));
