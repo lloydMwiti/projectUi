@@ -49,11 +49,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         }return fragment;
     }
 
-    @Nullable
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return mContext.getResources().getString(TAB_TITLES[position]);
-    }
+
 
     @Override
     public int getCount() {
